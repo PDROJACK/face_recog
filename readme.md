@@ -1,3 +1,3 @@
-venv\Scripts\activate
-pip3 install -r requirements.txt
-python -m flask run
+### Instructions
+1. pip3 install -r requirements.txt
+2. python -m flask run
