@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import face_recognition
 from os import listdir
 from os.path import isfile, join
@@ -28,7 +28,9 @@ def read_images():
     arr = listdir('./known/')
     
     for i in arr:
-        loaded_imgs[i.split('.')] = face_recognition.load_image_file(i)
+        k = "./known/"+i
+        #print(i.split('.'))
+        loaded_imgs[i.split('.')[0]] = face_recognition.load_image_file(k)
     
 
 read_images()
@@ -55,9 +57,11 @@ def detect_faces_in_image(file):
     unknown_face = face_recognition.face_encodings(unknown_face)[0]
     result = face_recognition.compare_faces(known_faces, unknown_face)
     if not True in result:
-        return false
+        print("Matched")
+        return False
     else:
-        return true
+        print("Not found")
+        return True
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -71,7 +75,11 @@ def predict():
 
         if file and allowed_file(file.filename):
             # The image file seems valid! Detect faces and return the result.
-            return detect_faces_in_image(file)
+            ans = detect_faces_in_image(file)
+            if(ans == True):
+                return jsonify( result='verified' )
+            else:
+                return jsonify( result='not verified' )
 
 
 if __name__ == "__main__":
