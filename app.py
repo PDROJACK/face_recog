@@ -35,8 +35,8 @@ def save_img():
         f = request.files['file']
         i = secure_filename(f.filename)
         f.save(join(dirname(__file__)+'/known', i))
-        #k = face_recognition.load_image_file('./known/'+f.filename)
-        #known_faces.append(face_recognition.face_encodings(k)[0])
+        k = face_recognition.load_image_file('./known/'+f.filename)
+        known_faces.append(face_recognition.face_encodings(k)[0])
         ##return "File saved successfully"
         return "file saved"
 
