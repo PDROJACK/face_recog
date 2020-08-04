@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
 import face_recognition
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, dirname
+from werkzeug.utils import secure_filename
+from flask_cors import CORS
+
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -9,6 +12,12 @@ cors = CORS(app)
 def hello_world():
         return 'Hello, Get'
 
+
+## Create and save encodings of known faces
+known_faces = []
+
+## load images dictionary
+loaded_imgs = {}
 
 
 # You can change this to any folder on your system
@@ -19,9 +28,17 @@ def allowed_file(filename):
                 filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-## load images dictionary
-loaded_imgs = {}
-
+## add image
+@app.route('/saveimg', methods=['POST'])
+def save_img():
+    if request.method == 'POST':
+        f = request.files['file']
+        i = secure_filename(f.filename)
+        f.save(join(dirname(__file__)+'/known', i))
+        #k = face_recognition.load_image_file('./known/'+f.filename)
+        #known_faces.append(face_recognition.face_encodings(k)[0])
+        ##return "File saved successfully"
+        return "file saved"
 
 ## read images from folder
 def read_images():
@@ -31,13 +48,7 @@ def read_images():
         k = "./known/"+i
         #print(i.split('.'))
         loaded_imgs[i.split('.')[0]] = face_recognition.load_image_file(k)
-    
 
-read_images()
-
-
-## Create and save encodings of known faces
-known_faces = []
 
 
 def create_enc():
@@ -47,9 +58,6 @@ def create_enc():
     except IndexError:
         print('Index error occurred')
         quit()
-
-## Loading enc in known_faces
-create_enc()
 
 
 def detect_faces_in_image(file):
@@ -62,6 +70,7 @@ def detect_faces_in_image(file):
     else:
         print("Not found")
         return True
+
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -83,4 +92,11 @@ def predict():
 
 
 if __name__ == "__main__":
+
+    ## Readinf images from known folder
+    read_images()
+   
+    ## Loading enc in known_faces
+    create_enc()
+
     app.run(host='0.0.0.0', port=5001, debug=True)
