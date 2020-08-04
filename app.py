@@ -4,7 +4,7 @@ from os import listdir
 from os.path import isfile, join
 
 app = Flask(__name__)
-
+cors = CORS(app)
 @app.route('/test')
 def hello_world():
         return 'Hello, Get'

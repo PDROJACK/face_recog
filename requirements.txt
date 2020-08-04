@@ -21,3 +21,4 @@ wrapt==1.12.1
 cmake
 face_recognition
 dlib
+flask-cors
