@@ -38,7 +38,7 @@ def save_img():
         k = face_recognition.load_image_file('./known/'+f.filename)
         known_faces.append(face_recognition.face_encodings(k)[0])
         ##return "File saved successfully"
-        return "file saved"
+        return jsonify(result="file saved")
 
 ## read images from folder
 def read_images():
@@ -97,6 +97,7 @@ if __name__ == "__main__":
     read_images()
    
     ## Loading enc in known_faces
-    create_enc()
+    #create_enc()
 
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)
+    
